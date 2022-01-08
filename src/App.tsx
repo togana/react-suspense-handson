@@ -17,13 +17,23 @@ const SometimesSuspend: React.VFC = () => {
   return <p>Hello, world!</p>;
 };
 
+const RenderingNotifier: React.VFC<{
+  name: string;
+}> = ({ name }) => {
+  console.log(`${name} is rendered`);
+
+  return null;
+};
+
 function App() {
   const [count, setCount] = useState(0);
   return (
     <div className="text-center">
       <h1 className="text-2xl">React App!</h1>
+      <RenderingNotifier name="outside-Suspense" />
       <Suspense fallback={<p>Loading...</p>}>
         <SometimesSuspend />
+        <RenderingNotifier name="inside-Suspense" />
         <button className="border p-1" onClick={() => setCount((c) => c + 1)}>
           {count}
         </button>
