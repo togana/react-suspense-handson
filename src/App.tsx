@@ -6,9 +6,15 @@ function sleep(ms: number) {
 }
 
 async function fetchData1(): Promise<string> {
-  const count = Math.random() * 1000;
-  await sleep(count);
-  return `Hello, ${(count).toFixed(0)}`;
+  // const count = Math.random() * 1000;
+  await sleep(1000);
+  return `Hello, ${(1000).toFixed(0)}`;
+}
+
+async function fetchData2(): Promise<string> {
+  // const count = Math.random() * 1000;
+  await sleep(1200);
+  return `Hello, ${(1200).toFixed(0)}`;
 }
 
 const AlwaysSuspend: React.VFC = () => {
@@ -41,17 +47,18 @@ function useData<T>(cacheKey: string, fetch: () => Promise<T>): T {
   return cachedData;
 }
 
-const DataLoader1: React.VFC = () => {
+const DataLoader1: React.FC = (props) => {
   const data = useData("DataLoader1", fetchData1);
   return (
     <div>
       <div>Data is {data}</div>
+      { props.children }
     </div>
   );
 };
 
 const DataLoader2: React.VFC = () => {
-  const data = useData("DataLoader2", fetchData1);
+  const data = useData("DataLoader2", fetchData2);
   return (
     <div>
       <div>Data is {data}</div>
@@ -108,32 +115,38 @@ export class Loadable<T> {
   }
 }
 
-const DataLoader: React.VFC<{
+const DataLoader: React.FC<{
   data: Loadable<string>;
-}> = ({ data }) => {
+}> = ({ data, children }) => {
   const value = data.getOrThrow();
   return (
     <div>
       <div>Data is {value}</div>
+      {children}
     </div>
   );
 };
 
 function App() {
   const [data1] = useState(() => new Loadable(fetchData1()));
-  const [data2] = useState(() => new Loadable(fetchData1()));
-  const [data3] = useState(() => new Loadable(fetchData1()));
+  const [data2] = useState(() => new Loadable(fetchData2()));
   return (
     <div className="text-center">
       <h1 className="text-2xl">React App!</h1>
       <Suspense fallback={<p>Loading...</p>}>
-        <DataLoader data={data1} />
+        <DataLoader data={data1}>
+          <Suspense fallback={<p>Loading...</p>}>
+            <DataLoader data={data2} />
+          </Suspense>
+        </DataLoader>
       </Suspense>
+
       <Suspense fallback={<p>Loading...</p>}>
-        <DataLoader data={data2} />
-      </Suspense>
-      <Suspense fallback={<p>Loading...</p>}>
-        <DataLoader data={data3} />
+        <DataLoader1>
+          <Suspense fallback={<p>Loading...</p>}>
+            <DataLoader2 />
+          </Suspense>
+        </DataLoader1>
       </Suspense>
     </div>
   );
