@@ -30,18 +30,27 @@ const RenderingNotifier: React.VFC<{
   return null;
 };
 
-let data: string | undefined;
+const dataMap: Map<string, string> = new Map();
 
-function useData1(): string {
-  // dataがまだ無ければローディングを開始する
-  if (data === undefined) {
-    throw fetchData1().then((d) => (data = d));
+function useData1(cacheKey: string): string {
+  const cachedData = dataMap.get(cacheKey);
+  if (cachedData === undefined) {
+    throw fetchData1().then((d) => dataMap.set(cacheKey, d));
   }
-  return data;
+  return cachedData;
 }
 
-const DataLoader: React.VFC = () => {
-  const data = useData1();
+const DataLoader1: React.VFC = () => {
+  const data = useData1("DataLoader1");
+  return (
+    <div>
+      <div>Data is {data}</div>
+    </div>
+  );
+};
+
+const DataLoader2: React.VFC = () => {
+  const data = useData1("DataLoader2");
   return (
     <div>
       <div>Data is {data}</div>
@@ -55,7 +64,8 @@ function App() {
       <h1 className="text-2xl">React App!</h1>
       <RenderingNotifier name="outside-Suspense" />
       <Suspense fallback={<p>Loading...</p>}>
-        <DataLoader />
+        <DataLoader1 />
+        <DataLoader2 />
       </Suspense>
     </div>
   )
