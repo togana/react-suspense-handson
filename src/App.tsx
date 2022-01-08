@@ -32,12 +32,16 @@ const RenderingNotifier: React.VFC<{
 
 let data: string | undefined;
 
-export const DataLoader: React.VFC = () => {
+function useData1(): string {
   // dataがまだ無ければローディングを開始する
   if (data === undefined) {
     throw fetchData1().then((d) => (data = d));
   }
-  // データがあればそれを表示
+  return data;
+}
+
+const DataLoader: React.VFC = () => {
+  const data = useData1();
   return (
     <div>
       <div>Data is {data}</div>
