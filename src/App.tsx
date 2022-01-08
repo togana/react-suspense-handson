@@ -1,5 +1,5 @@
 import './App.css'
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useState, useMemo } from 'react'
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -33,6 +33,14 @@ const RenderingNotifier: React.VFC<{
 const DataLoader: React.VFC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string | null>(null);
+
+  const _ = useMemo(() => {
+    if (loading) {
+      console.log("loading is true");
+    }
+    return 1;
+  }, [loading]);
+
   // ローディングフラグが立っていてdataがまだ無ければローディングを開始する
   if (loading && data === null) {
     throw fetchData1().then(setData);
