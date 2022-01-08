@@ -1,5 +1,5 @@
 import './App.css'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -13,7 +13,9 @@ function App() {
   return (
     <div className="text-center">
       <h1 className="text-2xl">React App!</h1>
-      <AlwaysSuspend />
+      <Suspense fallback={<p>Loading...</p>}>
+        <AlwaysSuspend />
+      </Suspense>
     </div>
   )
 }
