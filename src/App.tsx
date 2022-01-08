@@ -30,28 +30,17 @@ const RenderingNotifier: React.VFC<{
   return null;
 };
 
-const DataLoader: React.VFC = () => {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<string | null>(null);
+let data: string | undefined;
 
-  const _ = useMemo(() => {
-    if (loading) {
-      console.log("loading is true");
-    }
-    return 1;
-  }, [loading]);
-
-  // ローディングフラグが立っていてdataがまだ無ければローディングを開始する
-  if (loading && data === null) {
-    throw fetchData1().then(setData);
+export const DataLoader: React.VFC = () => {
+  // dataがまだ無ければローディングを開始する
+  if (data === undefined) {
+    throw fetchData1().then((d) => (data = d));
   }
   // データがあればそれを表示
   return (
     <div>
       <div>Data is {data}</div>
-      <button className="border p-1" onClick={() => setLoading(true)}>
-        load
-      </button>
     </div>
   );
 };
