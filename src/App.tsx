@@ -5,6 +5,11 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+async function fetchData1(): Promise<string> {
+  await sleep(1000);
+  return `Hello, ${(Math.random() * 1000).toFixed(0)}`;
+}
+
 const AlwaysSuspend: React.VFC = () => {
   console.log("AlwaysSuspend is rendered");
   throw sleep(1000);
@@ -25,18 +30,23 @@ const RenderingNotifier: React.VFC<{
   return null;
 };
 
+const DataLoader: React.VFC = () => {
+  const [data, setData] = useState<string | null>(null);
+  // dataがまだ無ければローディングを開始する
+  if (data === null) {
+    throw fetchData1().then(setData);
+  }
+  // データがあればそれを表示
+  return <div>Data is {data}</div>;
+};
+
 function App() {
-  const [count, setCount] = useState(0);
   return (
     <div className="text-center">
       <h1 className="text-2xl">React App!</h1>
       <RenderingNotifier name="outside-Suspense" />
       <Suspense fallback={<p>Loading...</p>}>
-        <SometimesSuspend />
-        <RenderingNotifier name="inside-Suspense" />
-        <button className="border p-1" onClick={() => setCount((c) => c + 1)}>
-          {count}
-        </button>
+        <DataLoader />
       </Suspense>
     </div>
   )
