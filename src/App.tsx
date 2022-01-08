@@ -10,12 +10,19 @@ const AlwaysSuspend: React.VFC = () => {
   throw sleep(1000);
 };
 
+const SometimesSuspend: React.VFC = () => {
+  if (Math.random() < 0.5) {
+    throw sleep(1000);
+  }
+  return <p>Hello, world!</p>;
+};
+
 function App() {
   return (
     <div className="text-center">
       <h1 className="text-2xl">React App!</h1>
       <Suspense fallback={<p>Loading...</p>}>
-        <AlwaysSuspend />
+        <SometimesSuspend />
       </Suspense>
     </div>
   )
